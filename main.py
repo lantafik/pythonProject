@@ -11,9 +11,12 @@ pay = 0
 
 @dp.message_handler(commands="start")
 async def start(message: types.Message):
+    global pay
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     buttons = ["Меню", "Акции", "Техническая поддержка", 'Оформить заказ']
     keyboard.add(*buttons)
+    pay = 0
+    basket.clear()
     await message.answer("Здравствуйте\nДобро пожаловать в онлайн пиццерию\nЧто вы хотите посмотреть?", reply_markup=keyboard)
     await bot.send_photo(chat_id=message.chat.id, photo=open('PIZZA.jpg', 'rb'))
 
