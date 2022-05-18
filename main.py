@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.dispatcher.filters import Text
 
-token = '5331055205:AAHcWOCvR8ov5WnRBSjlHJ6v28Q8GQwpj78'
+token = ''
 
 bot = Bot(token=token)
 dp = Dispatcher(bot)
