@@ -1,7 +1,7 @@
 from aiogram import Bot, Dispatcher, types, executor
 from aiogram.dispatcher.filters import Text
 
-token = ''
+token = '5331055205:AAHcWOCvR8ov5WnRBSjlHJ6v28Q8GQwpj78'
 
 bot = Bot(token=token)
 dp = Dispatcher(bot)
@@ -20,6 +20,7 @@ async def start(message: types.Message):
     await message.answer("Здравствуйте\nДобро пожаловать в онлайн пиццерию\nЧто вы хотите посмотреть?", reply_markup=keyboard)
     await bot.send_photo(chat_id=message.chat.id, photo=open('PIZZA.jpg', 'rb'))
 
+
 @dp.message_handler(Text(equals="Меню"))
 async def menu(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -32,9 +33,9 @@ async def menu(message: types.Message):
 @dp.message_handler(Text(equals="Пицца"))
 async def pizza(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ['Пепперони', '4 сыра', 'Маргарита', 'Сырная с ветчиной']
+    buttons = ['Пепперони', '4 сыра', 'Маргарита', 'Сырная с ветчиной', 'Вернуться обратно']
     keyboard.add(*buttons)
-    await message.answer("Список наших пицц:", reply_markup=keyboard)
+    await message.answer("Список наших пицц:\nПепперони - 699 рублей\n4 сыра - 499 рублей\nМаргарита - 499 рублей\nСырная с ветчиной - 599 рублей", reply_markup=keyboard)
 
 @dp.message_handler(Text(equals="Пепперони"))
 async def pizza1(message: types.Message):
@@ -136,7 +137,7 @@ async def stock2_for_1_price(message: types.Message):
     buttons = ["Воспользоваться: 2 по цене 1", 'Вернуться обратно']
     keyboard.add(*buttons)
     await message.answer("Акция: пицца в подарок", reply_markup=keyboard)
-    await message.answer("В данной акции пицца Сырная с ветчиной идет в подарок к пицце 4 сыра")
+    await message.answer("В данной акции пицца 4 сыра идет в подарок к пицце Сырная с ветчиной")
     await bot.send_photo(chat_id=message.chat.id, photo=open('2_for_1_new.png', 'rb'))
 
 @dp.message_handler(Text(equals="Воспользоваться: 1+1=3"))
@@ -155,7 +156,7 @@ async def buy_stock3_for_2_price(message: types.Message):
 @dp.message_handler(Text(equals="Воспользоваться: 2 по цене 1"))
 async def buy_stock2_for_1_price(message: types.Message):
     global pay
-    pay += 499
+    pay += 599
     basket.append('Сырная с ветчиной')
     basket.append('4 сыра')
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -169,7 +170,7 @@ async def buy_stock2_for_1_price(message: types.Message):
 @dp.message_handler(Text(equals="Напитки"))
 async def drinks(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    buttons = ["Купить Латте", 'Купить Капучино', 'Купить Черный чай', 'Купить Зеленый чай']
+    buttons = ["Купить Латте", 'Купить Капучино', 'Купить Черный чай', 'Купить Зеленый чай', 'Вернуться обратно']
     keyboard.add(*buttons)
     await message.answer("Все напитки доступные в нашем меню:\n\nЛатте(0.4) - 119 рублей\nКапучино(0.4) - 99 рублей\nЧерный чай(0.4) - 79 рублей\nЗеленый чай(0.4) - 79 рублей", reply_markup=keyboard)
 
@@ -282,8 +283,19 @@ async def helper(message: types.Message):
 
 @dp.message_handler(Text(equals='Оформить заказ'))
 async def zakaz(message: types.Message):
-    basket_new = '; '.join(basket)
-    await message.answer(f"Ваш заказ: {basket_new}\nК оплате: {pay} рублей\nЗабрать свой заказ вы сможете через 40 минут\nпо адресу г.Москва улица Пушкина дом Калатушкина")
+    await message.reply('Введите адрес для доставки')
+    @dp.message_handler()
+    async def echo_message1(message: types.Message):
+        adrees = message.text
+        if pay == 0:
+            keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+            keyboard.add('Вернуться обратно')
+            await message.answer('Вы ничего не заказали')
+        else:
+            basket_new = '; '.join(basket)
+            await message.answer(f"Ваш заказ: {basket_new}\nК оплате: {pay} рублей\nЧерез 40 минут заказ будет доставлен по адресу: {adrees}")
+
+
 
 if __name__ == '__main__':
     executor.start_polling(dp)
